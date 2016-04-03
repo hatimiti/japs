@@ -4,8 +4,10 @@ import java.util.function.Function;
 
 public class Main {
 	public static void main(String[] args) {
+		// Java8
 		中級者 になるための = Java勉強会(学習->学習.日々学習());
 		
+		// Java7
 		中級者 になるための_= Java勉強会(new Function<初級者, 中級者>() {
 			@Override
 			public 中級者 apply(初級者 学習) {
