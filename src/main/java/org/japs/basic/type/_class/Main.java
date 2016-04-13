@@ -1,5 +1,8 @@
 package org.japs.basic.type._class;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public final class Main {
 	public static void main(String[] args) throws InterruptedException {
 		Person p = new Person(170, 58);
@@ -10,6 +13,10 @@ public final class Main {
 		System.out.println(p.getClass() == Person.class); // true
 		
 		testPersonEquals();
+		System.out.println("------------------------");
+		testPersonHashCode();
+		System.out.println("------------------------");
+		testPersonToString();
 	}
 	
 	public static void testPersonEquals() {
@@ -33,5 +40,20 @@ public final class Main {
 		System.out.println("x eq y: " + x.equals(y)); // true
 		// 5. null
 		System.out.println("x eq null: " + x.equals(null)); // false
+	}
+	
+	public static void testPersonHashCode() {
+		Map<Person, String> m = new HashMap<>();
+		m.put(new Person(100, 20), "a");
+		m.put(new Person(100, 21), "b");
+		m.put(new Person(101, 20), "c");
+		
+		assert m.get(new Person(100, 20)).equals("a");
+		assert m.get(new Person(100, 21)).equals("b");
+		assert m.get(new Person(101, 20)).equals("c");
+	}
+	
+	public static void testPersonToString() {
+		System.out.println(new Person(170, 55));
 	}
 }

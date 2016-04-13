@@ -27,11 +27,31 @@ public final class Person {
 	
 	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (!(obj instanceof Person)) {
 			return false;
 		}
 		Person another = (Person) obj;
 		return this.height == another.height
 			&& this.weight == another.weight;
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = 1;
+		final int X = 31;
+		result = result * X + this.height;
+		result = result * X + this.weight;
+		return result;
+	}
+	
+	@Override
+	public String toString() {
+		return new StringBuilder(Person.class.getName())
+				.append(" { height: ").append(this.height).append(",")
+				.append(" weight: ").append(this.weight)
+				.append(" } ").toString();
 	}
 }
