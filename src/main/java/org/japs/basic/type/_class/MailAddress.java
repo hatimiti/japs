@@ -79,7 +79,7 @@ public class MailAddress {
 	 * characters (ASCII codes 0 through 31 inclusive and 127)
 	 * @return
 	 */
-	private boolean isValidLocalPart() {
+	public boolean isValidLocalPart() {
 		for (int i = 0; i < localPart.length(); i++) {
 			char c = localPart.charAt(i);
 			if (c < 31 || 127 < c) {
@@ -99,7 +99,7 @@ public class MailAddress {
 	 * <d> ::= any one of the ten digits 0 through 9
 	 * @return
 	 */
-	private boolean isValidDomain() {
+	public boolean isValidDomain() {
 		for (int i = 0; i < domain.length(); i++) {
 			char c = domain.charAt(i);
 			if (!(('A' <= c && c <= 'Z')

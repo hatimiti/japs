@@ -1,5 +1,8 @@
 package org.japs.basic.type._class;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * 人間の情報を表現するクラス．
  * @author m-kakimi
@@ -45,6 +48,9 @@ public final class Person {
 		result = result * X + this.height;
 		result = result * X + this.weight;
 		return result;
+//		return java.util.Objects.hash(this.height, this.weight); // from 1.7
+//		return java.util.Arrays.hashCode(
+//			new Object[] { this.height, this.weight }); // from 1.5
 	}
 	
 	@Override
