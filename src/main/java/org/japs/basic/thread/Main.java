@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -15,29 +16,31 @@ public class Main {
 		System.out.printf("priority of %s is %d.\n", m.getName(), m.getPriority());
 		System.out.println("It's showing at the main thread.");
 
-		Arrays.stream(m.getStackTrace())
-			.forEach(System.out::println);
+		Arrays.stream(m.getStackTrace()).forEach(System.out::println);
 
-		ExecutorService pool = Executors.newFixedThreadPool(3);
-		IntStream.range(0, 10).forEach(i -> {
-			pool.submit(() -> {
-				System.out.println(String.format("i: %s, th: %s", i, Thread.currentThread().getName()));
-			});
-		});
-		pool.shutdown();
+		// ExecutorService pool = Executors.newFixedThreadPool(3);
+		// IntStream.range(0, 10).forEach(i -> {
+		// pool.submit(() -> {
+		// System.out.println(String.format("i: %s, th: %s", i,
+		// Thread.currentThread().getName()));
+		// });
+		// });
+		// pool.shutdown();
 
+		// new AtomicTest().execute();
+		//
+		// BlockingQueue<Integer> q = new SynchronousQueue<>();
+		// new Thread(new SQThreadA(q)).start();
+		// new Thread(new SQThreadB(q)).start();
 
-//		new AtomicTest().execute();
-
-//		BlockingQueue<Integer> q = new SynchronousQueue<>();
-//		new Thread(new SQThreadA(q)).start();
-//		new Thread(new SQThreadB(q)).start();
-
-//		Share share = new Share();
-//		ThreadA a = new ThreadA(share);
-//		ThreadB b = new ThreadB(share);
-//		a.start();
-//		b.start();
+		// Share share = new Share();
+		Share2 share = new Share2();
+		Thread x = new ThreadA(share);
+		Thread y = new ThreadB(share);
+		x.setName("japs thread A");
+		y.setName("japs thread B");
+		x.start();
+		y.start();
 	}
 
 }
@@ -46,12 +49,13 @@ public class Main {
 // AtomicInteger
 
 class AtomicTest {
-//	private int num1 = 0;
+	// private int num1 = 0;
 	private AtomicInteger num1 = new AtomicInteger(0);
-	
+
 	Runnable r1 = () -> {
-		IntStream.range(0, 10000).forEach((i) -> num1.incrementAndGet()); 
+		IntStream.range(0, 10000).forEach((i) -> num1.incrementAndGet());
 	};
+
 	public void execute() {
 		IntStream.range(0, 1000).forEach((i) -> {
 			Thread t = new Thread(r1);
@@ -62,15 +66,15 @@ class AtomicTest {
 	}
 }
 
-
 ////////////////////////////////////////////////////////
 // SynchronousQueue
 
 class SQThreadA implements Runnable {
-	
+
 	BlockingQueue<Integer> queue;
+
 	public SQThreadA(BlockingQueue<Integer> queue) {
-		this.queue =queue;
+		this.queue = queue;
 	}
 
 	@Override
@@ -87,10 +91,11 @@ class SQThreadA implements Runnable {
 }
 
 class SQThreadB implements Runnable {
-	
+
 	BlockingQueue<Integer> queue;
+
 	public SQThreadB(BlockingQueue<Integer> queue) {
-		this.queue =queue;
+		this.queue = queue;
 	}
 
 	@Override
@@ -106,46 +111,100 @@ class SQThreadB implements Runnable {
 		}
 	}
 }
+
 ////////////////////////////////////////////////////////
 class ThreadA extends Thread {
 	private Share share;
-	public ThreadA(Share share) { this.share = share; }
+
+	public ThreadA(Share share) {
+		this.share = share;
+	}
+
 	public void run() {
-		for (int i = 0; i < 5; i++) { share.set(); }
+		for (;;) {
+			for (int i = 0; i < 5; i++) {
+				share.set();
+			}
+		}
 	}
 }
 
 class ThreadB extends Thread {
 	private Share share;
-	public ThreadB(Share share) { this.share = share; }
+
+	public ThreadB(Share share) {
+		this.share = share;
+	}
+
 	public void run() {
-		for (int i = 0; i < 5; i++) { share.print(); }
+		for (;;) {
+			for (int i = 0; i < 5; i++) {
+				share.print();
+			}
+		}
 	}
 }
 
 class Share {
 	private int a = 0;
 	private String b;
-	
+
 	public synchronized void set() {
 		while (a != 0) {
 			try {
 				wait();
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+			}
 		}
-		a++; b = "data";
+		a++;
+		b = "data";
 		notify();
 		System.out.println("  set() a: " + a + " b: " + b);
 	}
-	
+
 	public synchronized void print() {
 		while (b == null) {
 			try {
 				wait();
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+			}
 		}
-		a--; b = null;
+		a--;
+		b = null;
 		notify();
 		System.out.println("print() a: " + a + " b: " + b);
+	}
+}
+
+class Share2 extends Share {
+	private int a = 0;
+	private String b;
+
+	@Override
+	public synchronized void set() {
+		a++;
+		b = "data";
+		System.out.println("  set() a: " + a + " b: " + b);
+
+		try {
+			new Object();
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public synchronized void print() {
+		a--;
+		b = null;
+		System.out.println("print() a: " + a + " b: " + b);
+
+		try {
+			new Object();
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
