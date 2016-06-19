@@ -1,12 +1,8 @@
 package org.japs.web;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -41,7 +37,7 @@ public class Application {
 		}).addMapping("/hello");
 
 		tomcat.start();
-		Desktop.getDesktop().browse(new URI("http://localhost:8080/app/hello"));
+//		Desktop.getDesktop().browse(new URI("http://localhost:8080/app/hello"));
 		tomcat.getServer().await();
 
 	}

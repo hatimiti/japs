@@ -1,10 +1,9 @@
 package org.japs.basic.thread;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -180,6 +179,8 @@ class Share2 extends Share {
 	private int a = 0;
 	private String b;
 
+	private List<Object> objs = new ArrayList<>();
+
 	@Override
 	public synchronized void set() {
 		a++;
@@ -187,7 +188,7 @@ class Share2 extends Share {
 		System.out.println("  set() a: " + a + " b: " + b);
 
 		try {
-			new Object();
+			objs.add(new Object());
 			Thread.sleep(50);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -201,7 +202,8 @@ class Share2 extends Share {
 		System.out.println("print() a: " + a + " b: " + b);
 
 		try {
-			new Object();
+			objs.remove(new Object());
+			System.out.println("objs.size: " + objs.size());
 			Thread.sleep(50);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
