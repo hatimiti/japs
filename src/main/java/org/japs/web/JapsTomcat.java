@@ -21,8 +21,7 @@ public final class JapsTomcat {
 		port = getRandomPort();
 		tomcat.setPort(port);
 
-		File base = new File("src/main/resources/static");
-		Context ctx = tomcat.addContext("/app", base.getAbsolutePath());
+		Context ctx = tomcat.addContext("/app", null);
 
 		Tomcat.addServlet(ctx, "default", new DefaultServlet()).addMapping("/");
 		Tomcat.addServlet(ctx, path, servlet).addMapping(path);

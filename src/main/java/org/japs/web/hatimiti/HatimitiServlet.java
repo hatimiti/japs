@@ -23,7 +23,7 @@ public class HatimitiServlet {
 						throws ServletException, IOException {
 
 				Writer w = resp.getWriter();
-				w.write("Hello, World");
+				w.write("Hello, World\n");
 				w.flush();
 			}
 		}).start();
