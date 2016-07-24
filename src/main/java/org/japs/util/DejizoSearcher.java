@@ -1,4 +1,4 @@
-package org.japs.java8.stream;
+package org.japs.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

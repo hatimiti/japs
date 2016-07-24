@@ -32,14 +32,15 @@ public class Main {
 		// new Thread(new SQThreadA(q)).start();
 		// new Thread(new SQThreadB(q)).start();
 
-		// Share share = new Share();
-		Share2 share = new Share2();
-		Thread x = new ThreadA(share);
-		Thread y = new ThreadB(share);
-		x.setName("japs thread A");
-		y.setName("japs thread B");
-		x.start();
-		y.start();
+		Share share = new Share();
+//		Share2 share = new Share2();
+		Thread a = new ThreadA(share);
+		Thread b = new ThreadB(share);
+		a.setName("japs thread A");
+		b.setName("japs thread B");
+		b.start();
+		Share.sleep(1000);
+		a.start();
 	}
 
 }
@@ -120,10 +121,8 @@ class ThreadA extends Thread {
 	}
 
 	public void run() {
-		for (;;) {
-			for (int i = 0; i < 5; i++) {
-				share.set();
-			}
+		for (int i = 0; i < 5; i++) {
+			share.set();
 		}
 	}
 }
@@ -136,10 +135,8 @@ class ThreadB extends Thread {
 	}
 
 	public void run() {
-		for (;;) {
-			for (int i = 0; i < 5; i++) {
-				share.print();
-			}
+		for (int i = 0; i < 5; i++) {
+			share.print();
 		}
 	}
 }
@@ -150,28 +147,42 @@ class Share {
 
 	public synchronized void set() {
 		while (a != 0) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-			}
+//			try {
+				System.out.println("set() wait.");
+				//wait();
+				System.out.println("set() wait released.");
+//			} catch (InterruptedException e) {
+//			}
 		}
+		System.out.println("set() process.");
 		a++;
 		b = "data";
 		notify();
-		System.out.println("  set() a: " + a + " b: " + b);
+		sleep(3000);
+		System.out.println("set() a: " + a + " b: " + b);
 	}
 
 	public synchronized void print() {
 		while (b == null) {
 			try {
+				System.out.println("  print() wait.");
 				wait();
+				System.out.println("  print() wait released.");
 			} catch (InterruptedException e) {
 			}
 		}
+		System.out.println("  print() process.");
 		a--;
 		b = null;
 		notify();
-		System.out.println("print() a: " + a + " b: " + b);
+		System.out.println("  print() a: " + a + " b: " + b);
+	}
+	
+	protected static void sleep(long millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+		}
 	}
 }
 
