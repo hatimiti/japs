@@ -3,8 +3,9 @@ package org.japs.java8.stream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class StreamSample {
@@ -19,19 +20,34 @@ public class StreamSample {
 		persons.add(new Person(31, 310_000, LocalDate.of(2002, 4, 4)));
 		persons.add(new Person(42, 310_000, LocalDate.of(2000, 12, 10)));
 
-		System.out.println(
-				persons.stream()
-				.filter(p -> p.getAge() >= 30) 
-				.mapToInt(p -> p.getSalary())
-				.summaryStatistics().getAverage()
-				);
+		averageOfAge(persons);
+		checkSequentialFromParallelStream();
+		checkFlatMap();
 
-		Stream<String> st = Stream.of("a");
 		System.out.println(
-				st.parallel().sequential().isParallel()
-				);
+			persons.stream()
+				.reduce(0, (i, p) -> i + p.getSalary(), (i, j) -> i + j)
+		); // 1750000
+		System.out.println(
+			persons.stream()
+				.mapToInt(Person::getSalary)
+				.reduce(0, (i, j) -> i + j)
+		); // 1750000
+		System.out.println(
+			persons.stream()
+				.mapToInt(Person::getSalary)
+				.reduce((i, j) -> i + j)
+		); // OptionalInt[1750000]
+		
+		Optional<String> firstName = Optional.of("a");
+		Optional<String> lastName = Optional.of("b");
+		
+		Optional<String> r =
+				firstName.flatMap(fn ->
+					lastName.map(ln -> fn + ln));
+	}
 
-		AtomicInteger count = new AtomicInteger(0);
+	private static void checkFlatMap() {
 		String[] ary = Stream.of(Arrays.asList("a", "b"), Arrays.asList("c", "d"))
 				.flatMap(l -> {
 					List<String> r = new ArrayList<>(l);
@@ -39,25 +55,27 @@ public class StreamSample {
 					return r.stream();
 				})
 				.distinct()
-				.sorted((e1, e2) -> e1.length() - e2.length())
+				.sorted(Comparator.comparing(String::length))
+//				.sorted((e1, e2) -> e1.length() - e2.length())
 				.toArray(String[]::new);
 		//.forEach(e -> System.out.println("" + count.incrementAndGet() + e));
-		System.out.println(ary);
+		System.out.println(ary.length);
+	}
 
-		System.out.println();
-		count.set(0);
-		Stream.of(Arrays.asList("a", "b"), Arrays.asList("c", "d"))
-		.flatMap(List::stream)
-		.forEach(e -> System.out.println("" + count.incrementAndGet() + e));
-		/*
-        System.out.println(
-            persons.stream()
-                .collect(Collectors.maxBy((Person a, Person b) -> a.getAge() - b.getAge()))
-                .entrySet()
-                .stream()
-                .mapToObj(p -> p.getEnteredDate())
-        );
-		 */
+	private static void checkSequentialFromParallelStream() {
+		Stream<String> st = Stream.of("a");
+		System.out.println(
+			st.parallel().sequential().isParallel()
+		);
+	}
+
+	private static void averageOfAge(List<Person> persons) {
+		System.out.println(
+			persons.stream()
+				.filter(p -> p.getAge() >= 30) 
+				.mapToInt(p -> p.getSalary())
+				.summaryStatistics().getAverage()
+		);
 	}
 
 }

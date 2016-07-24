@@ -25,7 +25,7 @@ public interface FuncIntf<T> {
 		
 		// Java 8
 		Collections.sort(strings, (o1, o2) -> o1.compareTo(o2));
-		
+		Collections.sort(strings, (String o1, String o2) -> { return o1.compareTo(o2); });
 	}
 	
 }

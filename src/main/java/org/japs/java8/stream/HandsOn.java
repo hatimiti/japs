@@ -12,6 +12,7 @@ import java.util.function.ToDoubleBiFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * [ルール]
@@ -137,6 +138,7 @@ public class HandsOn {
 		// 2015: 4
 		// 2016: 4
 	}
+
 
 	public static void main(String... args) {
 		problem_1(); System.out.println();

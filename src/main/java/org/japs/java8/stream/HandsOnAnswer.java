@@ -1,5 +1,6 @@
 package org.japs.java8.stream;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
@@ -13,6 +14,7 @@ import java.util.function.ToDoubleBiFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * [ルール]
@@ -139,7 +141,12 @@ public class HandsOnAnswer {
 	public static void problem_5() {
 		System.out.println("-- problem_5 --");
 		System.out.println("発売年毎の商品数を表示してください．(発売年順に並び替え)");
-		
+		/*
+		 * [参考]
+		 * ・発売年の取得: Product#getSaleDay().getYear()
+		 * ・Map型をStream化: Map#entrySet().stream()
+		 * ・EntryからKey/Val取得: Entry#getKey(), Entry#getValue()
+		 */
 		System.out.println(
 			Products.all().stream()
 				// ここに Stream API で処理
@@ -156,13 +163,52 @@ public class HandsOnAnswer {
 		// 2015: 4
 		// 2016: 4
 	}
+	
+	public static void problem_6() {
+		System.out.println("-- problem_6 --");
+		System.out.println("int 型配列を Stream 化し、count()を取得してください．");
+		
+		final int[] ARY = { 1, 2, 3, 4, 5 };
+		
+		System.out.println(
+			// ここに Stream API で処理
+			// Stream.of(ARY).count() // NG
+			// Arrays.asList(ARY).stream().count() // NG
+			Arrays.stream(ARY).count()
+		);
+		// [出力例]
+		// 5
+	}
+	
+	public static void problem_7() {
+		System.out.println("-- problem_7 --");
+		System.out.println("");
+		
+		System.out.println(
+			// ここに Stream API で処理
+		);
+		// [出力例]
+	}	
 
+	public static void problem_() {
+		System.out.println("-- problem_ --");
+		System.out.println("");
+		
+		System.out.println(
+			// ここに Stream API で処理
+		);
+		// [出力例]
+	}	
+	
 	public static void main(String... args) {
 		problem_1(); System.out.println();
 		problem_2(); System.out.println();
 		problem_3(); System.out.println();
 		problem_4(); System.out.println();
 		problem_5(); System.out.println();
+
+		problem_6(); System.out.println();
+		problem_7(); System.out.println();
 	}
 
 }
