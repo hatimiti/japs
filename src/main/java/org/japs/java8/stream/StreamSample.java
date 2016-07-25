@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 public class StreamSample {
@@ -20,10 +19,26 @@ public class StreamSample {
 		persons.add(new Person(31, 310_000, LocalDate.of(2002, 4, 4)));
 		persons.add(new Person(42, 310_000, LocalDate.of(2000, 12, 10)));
 
+		System.out.println("-- sample --");
 		averageOfAge(persons);
+		averageOfAgeByLoop(persons);
+		
 		checkSequentialFromParallelStream();
 		checkFlatMap();
+		checkReduce(persons);
 
+		long a = Stream.of("a", "b", "c").count();
+		System.out.println(a);
+		
+		List<String> o = Arrays.asList("a", "b");
+		List<String> l = new ArrayList<>(o);
+		l.replaceAll(String::toUpperCase);
+		System.out.println(o);
+		System.out.println(l);
+
+	}
+
+	private static void checkReduce(List<Person> persons) {
 		System.out.println(
 			persons.stream()
 				.reduce(0, (i, p) -> i + p.getSalary(), (i, j) -> i + j)
@@ -38,13 +53,6 @@ public class StreamSample {
 				.mapToInt(Person::getSalary)
 				.reduce((i, j) -> i + j)
 		); // OptionalInt[1750000]
-		
-		Optional<String> firstName = Optional.of("a");
-		Optional<String> lastName = Optional.of("b");
-		
-		Optional<String> r =
-				firstName.flatMap(fn ->
-					lastName.map(ln -> fn + ln));
 	}
 
 	private static void checkFlatMap() {
@@ -76,6 +84,22 @@ public class StreamSample {
 				.mapToInt(p -> p.getSalary())
 				.summaryStatistics().getAverage()
 		);
+	}
+	
+	private static void averageOfAgeByLoop(List<Person> persons) {
+		double result = 0.0;
+		int sum = 0;
+		int count = 0;
+		for (Person p : persons) {
+			if (p.getAge() >= 30) {
+				sum += p.getSalary();
+				count++;
+			}
+		}
+		if (count != 0) {
+			result = ((double) sum) / count;
+		}
+		System.out.println(result);
 	}
 
 }
