@@ -7,7 +7,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -211,13 +213,28 @@ public class StreamSample {
 	public static void reducing(List<Person> persons) {
 		System.out.println("-- reducing --");
 		
-		HashMap<Integer, Integer> ret = persons.stream()
+		Map<Integer, Integer> ret = persons.stream()
 			.reduce(new HashMap<Integer, Integer>(), (m, p) -> {
 				m.put(p.getAge(), m.getOrDefault(p.getAge(), 0) + 1);
 				return m;
 			}, (m1, m2) -> { m1.putAll(m2); return m1; });
-		
 		System.out.println(ret);
+		
+		ret = persons.stream()
+			.collect(HashMap<Integer, Integer>::new,
+					(m, p) -> m.put(p.getAge(), m.getOrDefault(p.getAge(), 0) + 1),
+					(m1, m2) -> m1.putAll(m2));
+		System.out.println(ret);
+
+		int sumAge = persons.stream()
+			.reduce(0, (i, p) -> i + p.getAge(), Integer::sum);
+		System.out.println(sumAge);
+		
+		sumAge = persons.stream()
+			.collect(() -> new AtomicInteger(0),
+					(i, p) -> i.addAndGet(p.getAge()),
+					(i, j) -> i.addAndGet(j.get())).get();
+		System.out.println(sumAge);
 	}
 }
 
