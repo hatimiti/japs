@@ -1,5 +1,6 @@
 package org.japs.java8.stream;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -126,7 +127,14 @@ public class HandsOn {
 	public static void problem_5() {
 		System.out.println("-- problem_5 --");
 		System.out.println("発売年毎の商品数を表示してください．(発売年順に並び替え)");
-		
+		/*
+		 * [参考]
+		 * ・発売年の取得: Product#getSaleDay().getYear()
+		 * ・グルーピング: Stream#collect(Collectors.groupingBy(Function<T, K>)) -> Map型で帰る
+		 * ・Map型をStream化: Map#entrySet().stream()
+		 * ・EntryからKey/Val取得: Entry#getKey(), Entry#getValue()
+		 * ・ソーティング: Stream#sorted(Comparator)
+		 */
 		System.out.println(
 			Products.all().stream()
 				// ここに Stream API で処理
@@ -138,7 +146,19 @@ public class HandsOn {
 		// 2015: 4
 		// 2016: 4
 	}
-
+	
+	public static void problem_6() {
+		System.out.println("-- problem_6 --");
+		System.out.println("int 型配列を Stream 化し、count()を取得してください．");
+		
+		final int[] ARY = { 1, 2, 3, 4, 5 };
+		
+		System.out.println(
+			// ここに Stream API で処理
+		);
+		// [出力例]
+		// 5
+	}
 
 	public static void main(String... args) {
 		problem_1(); System.out.println();

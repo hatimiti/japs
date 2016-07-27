@@ -144,6 +144,7 @@ public class HandsOnAnswer {
 		/*
 		 * [参考]
 		 * ・発売年の取得: Product#getSaleDay().getYear()
+		 * ・グルーピング: Stream#collect(Collectors.groupingBy(Function<T, K>)) -> Map型で帰る
 		 * ・Map型をStream化: Map#entrySet().stream()
 		 * ・EntryからKey/Val取得: Entry#getKey(), Entry#getValue()
 		 */
@@ -188,7 +189,7 @@ public class HandsOnAnswer {
 			// ここに Stream API で処理
 		);
 		// [出力例]
-	}	
+	}
 
 	public static void problem_() {
 		System.out.println("-- problem_ --");
