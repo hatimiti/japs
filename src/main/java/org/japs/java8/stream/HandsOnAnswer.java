@@ -2,7 +2,7 @@ package org.japs.java8.stream;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -14,7 +14,6 @@ import java.util.function.ToDoubleBiFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * [ルール]
@@ -148,13 +147,24 @@ public class HandsOnAnswer {
 		 * ・Map型をStream化: Map#entrySet().stream()
 		 * ・EntryからKey/Val取得: Entry#getKey(), Entry#getValue()
 		 */
+//		System.out.println(
+//			Products.all().stream()
+//				// ここに Stream API で処理
+//				.collect(Collectors.groupingBy(p -> p.getSaleDay().getYear()))
+//				.entrySet().stream()
+//				.sorted(Comparator.comparingInt(Entry::getKey))
+//				.map(e -> e.getKey() + ": " + e.getValue().size())
+//				.collect(Collectors.joining("\n"))
+//		);
 		System.out.println(
 			Products.all().stream()
-				// ここに Stream API で処理
-				.collect(Collectors.groupingBy(p -> p.getSaleDay().getYear()))
+				.sorted(Comparator.comparing(Product::getSaleDay))
+				.collect(TreeMap<Integer, Integer>::new, (m, p) -> {
+							int year = p.getSaleDay().getYear();
+							m.put(year, m.getOrDefault(year, 0) + 1);
+						}, (m1, m2) -> m1.putAll(m2))
 				.entrySet().stream()
-				.sorted(Comparator.comparingInt(Entry::getKey))
-				.map(e -> e.getKey() + ": " + e.getValue().size())
+				.map(e -> e.getKey() + ": " + e.getValue())
 				.collect(Collectors.joining("\n"))
 		);
 		// [出力例]

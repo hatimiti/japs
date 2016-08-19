@@ -10,13 +10,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class StreamSample {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		List<Person> persons = new ArrayList<>();
 
 		persons.add(new Person(22, 240_000, LocalDate.of(2000, 12, 22)));
@@ -26,7 +28,6 @@ public class StreamSample {
 		persons.add(new Person(31, 310_000, LocalDate.of(2002, 4, 4)));
 		persons.add(new Person(42, 310_000, LocalDate.of(2000, 12, 10)));
 
-		System.out.println("-- sample --");
 		averageOfAge(persons);
 		averageOfAgeByMethodRef(persons);
 		averageOfAgeByLoop(persons);
@@ -41,7 +42,17 @@ public class StreamSample {
 		currying();
 
 		reducing(persons);
+		toMap(persons);
 		
+		sort();
+		
+		lambdaClasses(1);
+		lambdaClasses(2);
+		sameLambdaClasses(1);
+		sameLambdaClasses(2);
+	}
+
+	private static void sort() {
 		List<String> strings = Arrays.asList("b", "a", "c");
 		Comparator<String> c = (o1, o2) -> o1.compareTo(o2);
 		Collections.sort(strings, c);
@@ -88,6 +99,7 @@ public class StreamSample {
 	}
 
 	private static double averageOfAge(List<Person> persons) {
+		System.out.println("-- averageOfAge --");
 		return persons.stream()
 				.filter(p -> p.getAge() >= 30) 
 				.mapToInt(p -> p.getSalary())
@@ -95,6 +107,7 @@ public class StreamSample {
 	}
 
 	private static double averageOfAgeByMethodRef(List<Person> persons) {
+		System.out.println("-- averageOfAgeByMethodRef --");
 		return persons.stream()
 				.filter(p -> p.getAge() >= 30) 
 				.mapToInt(Person::getSalary) // ←「p -> p.getSalary()」
@@ -102,6 +115,7 @@ public class StreamSample {
 	}
 
 	private static double averageOfAgeByLoop(List<Person> persons) {
+		System.out.println("-- averageOfAgeByLoop --");
 		double result = 0.0;
 		int sum = 0;
 		int count = 0;
@@ -236,6 +250,67 @@ public class StreamSample {
 					(i, j) -> i.addAndGet(j.get())).get();
 		System.out.println(sumAge);
 	}
+	
+	public static void toMap(List<Person> persons) {
+		System.out.println("-- toMap --");
+		Map<Integer, String> m = persons.stream()
+			.collect(Collectors.toMap(
+					Person::getAge,
+					p -> String.valueOf(p.getSalary()),
+					(n, a) -> n + "," + a));
+		System.out.println(m);
+	}
+	
+	public static void lambdaClasses(int count) {
+		System.out.println("-- lambdaClasses (" + count + ") --");
+		Function<String, Integer> f1 = s -> s.length();
+		Function<String, Integer> f2 = s -> s.length();
+		Function<String, Integer> f3 = s -> Integer.parseInt(s);
+		System.out.println(f1);
+		System.out.println(f2);
+		System.out.println(f3);
+		System.out.println();
+
+		System.out.println((Function<String, Integer>) s -> s.length());
+		System.out.println((Function<String, Integer>) s -> s.length());
+		System.out.println((Function<String, Integer>) s -> Integer.parseInt(s));
+		System.out.println();
+
+		System.out.println(func1());
+		System.out.println(func1());
+		System.out.println(func2());
+		System.out.println();
+		
+		System.out.println((Function<String, Integer>) s -> Integer.parseInt(s) + count);
+		System.out.println((Function<String, Integer>) s -> Integer.parseInt(s) + count);
+	}
+	private static Function<String, Integer> func1() { return s -> s.length(); }
+	private static Function<String, Integer> func2() { return s -> Integer.parseInt(s); }
+	
+	public static void sameLambdaClasses(int count) {
+		System.out.println("-- samleLambdaClasses (" + count + ") --");
+		Function<String, Integer> f1 = s -> s.length();
+		Function<String, Integer> f2 = s -> s.length();
+		Function<String, Integer> f3 = s -> Integer.parseInt(s);
+		System.out.println(f1);
+		System.out.println(f2);
+		System.out.println(f3);
+		System.out.println();
+
+		System.out.println((Function<String, Integer>) s -> s.length());
+		System.out.println((Function<String, Integer>) s -> s.length());
+		System.out.println((Function<String, Integer>) s -> Integer.parseInt(s));
+		System.out.println();
+
+		System.out.println(func1());
+		System.out.println(func1());
+		System.out.println(func2());
+		System.out.println();
+		
+		System.out.println((Function<String, Integer>) s -> Integer.parseInt(s) + count);
+		System.out.println((Function<String, Integer>) s -> Integer.parseInt(s) + count);
+	}
+	
 }
 
 @FunctionalInterface
