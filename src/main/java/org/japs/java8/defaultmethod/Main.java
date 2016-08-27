@@ -1,36 +1,60 @@
 package org.japs.java8.defaultmethod;
 
 public final class Main {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+		new Main().execute(args);
+	}
+	
+	private void execute(String[] args) {
+		System.out.println("-- Parent#greet() --");
+		System.out.println(new Parent(){}.greet());
+		// Parent: hello()
+
+		System.out.println("\n-- ChildA#greet() --");
+		System.out.println(new ChildA(){}.greet());
+		// ChildA: (Parent: hello())
+
+		System.out.println("\n-- ChildB#greet() --");
+		System.out.println(new ChildB(){}.greet());
+		// ChildB: greet()
+
+		System.out.println("\n-- Implementer#greet() --");
+		System.out.println(new Implementer().greet());
+		// ChildA: (ChildB: hello())
 		
 	}
-}
-
-interface Movable {
-
-	int walk();
 	
-	default int run() {
-		return walk() * 2;
+	interface Parent {
+		default String hello() {
+			return "Parent: hello()";
+		};
+		
+		default String greet() {
+			return hello();
+		}
+	}
+	interface ChildA extends Parent {
+		@Override
+		default String greet() {
+			return "ChildA: (" + hello() + ")";
+		}
+	}
+	interface ChildB extends Parent {
+		@Override
+		default String hello() {
+			return "ChildB: hello()";
+		}
+		
+		@Override
+		default String greet() {
+			return "ChildB: greet()";
+		}
+	}
+	class Implementer implements ChildA, ChildB {
+		@Override
+		public String greet() {
+			return ChildA.super.greet();
+		}
 	}
 }
 
-class Person implements Movable {
-	@Override
-	public int walk() { return 10; }
-}
-
-//コンパイルエラー(The default method func() inherited from Intf2 conflicts with another method inherited from Intf)
-//Intf2がdefaultメソッドで実装していても
-//Xクラスで実装する必要がある
-//class X implements Intf, Intf2 {
-//
-//}
-interface Intf {
-	void func();
-}
-interface Intf2 {
-	default void func() {
-		System.out.println("Intf2#func");
-	}
-}
