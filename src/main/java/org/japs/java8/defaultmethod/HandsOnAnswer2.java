@@ -1,57 +1,87 @@
 package org.japs.java8.defaultmethod;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 /**
- * Movable メソッド内で ((GameEntity) this) を利用して、実装した例．
- * GameEntity 以外に Movable インターフェースを実装すると例外となります．
+ * mixin を利用して、複数の機能を組み合わせたクラスを作成してください．
  */
 public final class HandsOnAnswer2 {
 	public static void main(String[] args) throws Exception {
-		System.out.println("-- HandsOnAnswer1_1 --");
-		new HandsOnAnswer2().startGame();
+		System.out.println("-- HandsOn2 --");
+		new HandsOnAnswer2().start();
 	}
 	
-	private void startGame() {
+	private void start() {
+		PC pc = new PC();
+		pc.start("Chrome");
+		pc.input("Hello");
 		
-		Player p = new Player();
-		Enemy e = new Enemy();
-		
-		p.moveForward();
-		p.moveRight();
-		System.out.println("player " + p);
-		
-		e.moveBack();
-		e.moveLeft();
-		System.out.println("enemy " + e);
-		
+		Tablet tb = new Tablet();
+		tb.start("Java");
+		tb.input("Hello");
 	}
-	
-	class GameEntity {
-		protected int x;
-		protected int y;
+
+	abstract class Device implements Display, CPU, InputDataModifiable {
+		private final BlockingQueue<String> in;
+		public Device () {
+			in = new ArrayBlockingQueue<>(3);
+		}
 		@Override
-		public String toString() {
-			return String.format("position: %d, %d", x, y);
-		}
-	}
-
-	class Player extends GameEntity implements Movable {}
-	class Enemy extends GameEntity implements Movable {}
-	class Weapon extends GameEntity {}
-
-	interface Movable {
-		default void moveForward() {
-			((GameEntity) this).y -= 1;
-		}
-		default void moveBack() {
-			((GameEntity) this).y += 1;
-		}
-		default void moveLeft() {
-			((GameEntity) this).x -= 1;
-		}
-		default void moveRight() {
-			((GameEntity) this).x += 1;
-			// GameEntity.class.cast(this).x += 1;
+		public BlockingQueue<String> getQueue() { return in; }
+		
+		public void start(String application) {
+			ExecutorService s = null;
+			try {
+				s = Executors.newSingleThreadExecutor();
+				s.submit(() -> calc(application, this));
+			} finally {
+				if (s != null) {
+					s.shutdown();
+				}
+			}
 		}
 	}
 	
+	class PC extends Device implements Keybord {}
+	class Tablet extends Device implements TouchPanel {}
+
+	/** 画面表示を可能にする機能を付加するインタフェース */
+	interface Display {
+		default void print(String message) {
+			System.out.println(message);
+		}
+	}
+	/** 演算処理を可能にする機能を付加するインタフェース */
+	interface CPU extends InputDataModifiable {
+		default void calc(String application, Display d) {
+			try {
+				d.print(application + "/" + getQueue().poll(3, TimeUnit.SECONDS));
+			} catch (InterruptedException e) {
+				System.out.println("end-of-input");
+			}
+		}
+	}
+	/** タッチ操作を可能にする機能を付加するインタフェース */
+	interface TouchPanel extends InputDataModifiable {
+		default void input(String word) {
+			getQueue().add("By TouchPanel: " + word);
+		}
+	}
+	/** キーボード入力を可能にする機能を付加するインタフェース */
+	interface Keybord extends InputDataModifiable {
+		default void input(String word) {
+			getQueue().add("By Keybord: " + word);
+		}
+	}
+
+	/**
+	 * mixin ではインスタンス変数が保持できないため、当インタフェースで共有データをやり取りする．
+	 */
+	interface InputDataModifiable {
+		BlockingQueue<String> getQueue();
+	}
 }
