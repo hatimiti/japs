@@ -190,16 +190,6 @@ public class HandsOnAnswer {
 		// [出力例]
 		// 5
 	}
-	
-	public static void problem_7() {
-		System.out.println("-- problem_7 --");
-		System.out.println("");
-		
-		System.out.println(
-			// ここに Stream API で処理
-		);
-		// [出力例]
-	}
 
 	public static void problem_() {
 		System.out.println("-- problem_ --");
@@ -217,9 +207,7 @@ public class HandsOnAnswer {
 		problem_3(); System.out.println();
 		problem_4(); System.out.println();
 		problem_5(); System.out.println();
-
 		problem_6(); System.out.println();
-		problem_7(); System.out.println();
 	}
 
 }

@@ -24,13 +24,13 @@ public final class Main {
 		Person y = new Person(170, 58);
 		Person z = new Person(170, 58);
 		
-		Person _ = new Person(171, 59);
+		Person __ = new Person(171, 59);
 		// 1. reflexive
 		System.out.println("x eq x: " + x.equals(x)); // true
 		// 2. symmetric
 		System.out.println("x eq y: " + x.equals(y)); // true
 		System.out.println("y eq x: " + y.equals(x)); // true
-		System.out.println("_ eq x: " + _.equals(x)); // false
+		System.out.println("_ eq x: " + __.equals(x)); // false
 		// 3. transitive
 		System.out.println("x eq y: " + x.equals(y)); // true
 		System.out.println("y eq z: " + y.equals(z)); // true

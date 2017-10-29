@@ -166,6 +166,7 @@ public class HandsOn {
 		problem_3(); System.out.println();
 		problem_4(); System.out.println();
 		problem_5(); System.out.println();
+		problem_6(); System.out.println();
 	}
 
 }
